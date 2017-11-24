@@ -1,6 +1,13 @@
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -211,6 +218,11 @@ public class Main extends javax.swing.JFrame {
         jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 250, -1, -1));
 
         jButton5.setText("Cargar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
         jPanel3.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 180, 140, 30));
 
         jButton6.setText("Eliminar");
@@ -236,6 +248,11 @@ public class Main extends javax.swing.JFrame {
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("Abrir");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         jMenuBar1.add(jMenu1);
@@ -290,8 +307,8 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        u.CargarArchivo();
 
+        indice = cb_modificar.getSelectedIndex();
         u.getListSeres().get(indice).setAños(Integer.parseInt(tf_años1.getText()));
         u.getListSeres().get(indice).setKi(Integer.parseInt(tf_ki1.getText()));
         u.getListSeres().get(indice).setNombrePlaneta(tf_nombreP1.getText());
@@ -305,9 +322,12 @@ public class Main extends javax.swing.JFrame {
             model.addElement(t);
         }
         cb_modificar.setModel(model);
+        try {
+            indice = cb_modificar.getSelectedIndex();
+            ListSeres.remove(indice);
+        } catch (Exception e) {
+        }
 
-        indice = cb_modificar.getSelectedIndex();
-        cb_modificar.remove(indice);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void cb_modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_modificarActionPerformed
@@ -315,13 +335,70 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_cb_modificarActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-
+        try {
+            u.escribirArchivo();
+            u.CargarArchivo();
+        } catch (Exception e) {
+        }
+        
+        
+        
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-    indice = cb_eliminar.getSelectedIndex();
-    ListSeres.remove(indice);
+
+        try {
+            int pos = cb_eliminar.getSelectedIndex();
+            ListSeres.remove(pos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        DefaultComboBoxModel modelo = (DefaultComboBoxModel) cb_eliminar.getModel();
+        for (SeresVivos t : ListSeres) {
+            modelo.addElement(t);
+        }
+        cb_eliminar.setModel(modelo);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        try {
+            u.CargarArchivo();
+        } catch (Exception e) {
+        }
+        ListSeres = new ArrayList();
+        JFileChooser jc = new JFileChooser();
+        int c = jc.showOpenDialog(this);
+        File archivo = jc.getSelectedFile();
+        Scanner sc = null;
+        if (c == JFileChooser.APPROVE_OPTION) {
+            try {
+                sc = new Scanner(archivo);
+                sc.useDelimiter(";");
+                while (sc.hasNext()) {
+                    ArrayList<SeresVivos> at = new ArrayList();
+                    String paquete = sc.next();
+                    String nombre = sc.next();
+                    int x = sc.nextInt();
+                    int y = sc.nextInt();
+                    Scanner sc2 = new Scanner(sc.next());
+                    sc2.useDelimiter("|");
+                    while (sc2.hasNext()) {
+                        at.add(new SeresVivos(sc2.next(), sc2.nextInt(), sc2.nextInt(),sc2.next()));
+                    }
+                 
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                sc.close();
+            }
+        }
+
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments
