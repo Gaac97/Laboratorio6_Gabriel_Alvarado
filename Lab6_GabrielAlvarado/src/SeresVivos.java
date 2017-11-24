@@ -59,6 +59,6 @@ public class SeresVivos {
 
     @Override
     public String toString() {
-        return "SeresVivos{" + "nombreRaza=" + nombreRaza + ", ki=" + ki + ", a\u00f1os=" + años + ", nombrePlaneta=" + nombrePlaneta + '}';
+        return "nombreRaza=" + nombreRaza + ", ki=" + ki + ", a\u00f1os=" + años + ", nombrePlaneta=" + nombrePlaneta + '}';
     }
 }
