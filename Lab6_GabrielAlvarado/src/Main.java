@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -266,15 +268,22 @@ public class Main extends javax.swing.JFrame {
         String nombre, planeta;
         int ki;
         int años;
-        nombre = tf_nombre.getText();
-        ki = Integer.parseInt(tf_ki.getText());
-        años = Integer.parseInt(tf_años.getText());
-        planeta = tf_nombreP.getText();
-        SeresVivos s = new SeresVivos(nombre, ki, años, planeta);
-        u.getListSeres().add(s);
-        ListSeres.add(s);
+        
+        try {
+            nombre = tf_nombre.getText();
+            ki = Integer.parseInt(tf_ki.getText());
+            años = Integer.parseInt(tf_años.getText());
+            planeta = tf_nombreP.getText();
+            SeresVivos s = new SeresVivos(nombre, ki, años, planeta);
+           ListSeres.add(s);
+           u.setListSeres(new SeresVivos(nombre, ki, años, planeta));
+           u.escribirArchivo();
+           
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        //setear
+        //settear
         tf_nombre.setText("");
         tf_años.setText("");
         tf_nombreP.setText("");
@@ -289,39 +298,42 @@ public class Main extends javax.swing.JFrame {
         }
         jd_Universo.setModal(true);
         jd_Universo.pack();
-
+        
         jd_Universo.setVisible(true);
     }//GEN-LAST:event_bt_universoActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         String nombre = tf_nombreu.getText();
-        Universo u = new Universo(nombre);
+        
         try {
-            u.escribirArchivo();
+            u.setNombre(nombre);
         } catch (Exception e) {
         }
         //Setear
         tf_nombreu.setText("");
-
+        
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
+        
         indice = cb_modificar.getSelectedIndex();
         u.getListSeres().get(indice).setAños(Integer.parseInt(tf_años1.getText()));
         u.getListSeres().get(indice).setKi(Integer.parseInt(tf_ki1.getText()));
         u.getListSeres().get(indice).setNombrePlaneta(tf_nombreP1.getText());
         u.getListSeres().get(indice).setNombreRaza(tf_nombre1.getText());
+        
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         DefaultComboBoxModel model = (DefaultComboBoxModel) cb_modificar.getModel();
+        u.CargarArchivo();
         for (SeresVivos t : ListSeres) {
             model.addElement(t);
         }
         cb_modificar.setModel(model);
+        cb_eliminar.setModel(model);
         try {
             indice = cb_modificar.getSelectedIndex();
             ListSeres.remove(indice);
@@ -337,66 +349,35 @@ public class Main extends javax.swing.JFrame {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         try {
             u.escribirArchivo();
-            u.CargarArchivo();
         } catch (Exception e) {
         }
         
-        
-        
+
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-
+        
         try {
             int pos = cb_eliminar.getSelectedIndex();
             ListSeres.remove(pos);
+            cb_eliminar.remove(pos);
         } catch (Exception e) {
             e.printStackTrace();
+            
         }
 
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        DefaultComboBoxModel modelo = (DefaultComboBoxModel) cb_eliminar.getModel();
-        for (SeresVivos t : ListSeres) {
-            modelo.addElement(t);
-        }
-        cb_eliminar.setModel(modelo);
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        try {
-            u.CargarArchivo();
-        } catch (Exception e) {
-        }
-        ListSeres = new ArrayList();
-        JFileChooser jc = new JFileChooser();
-        int c = jc.showOpenDialog(this);
-        File archivo = jc.getSelectedFile();
-        Scanner sc = null;
-        if (c == JFileChooser.APPROVE_OPTION) {
-            try {
-                sc = new Scanner(archivo);
-                sc.useDelimiter(";");
-                while (sc.hasNext()) {
-                    ArrayList<SeresVivos> at = new ArrayList();
-                    String paquete = sc.next();
-                    String nombre = sc.next();
-                    int x = sc.nextInt();
-                    int y = sc.nextInt();
-                    Scanner sc2 = new Scanner(sc.next());
-                    sc2.useDelimiter("|");
-                    while (sc2.hasNext()) {
-                        at.add(new SeresVivos(sc2.next(), sc2.nextInt(), sc2.nextInt(),sc2.next()));
-                    }
-                 
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                sc.close();
-            }
-        }
+        Universo q = new Universo();
+        q.leer();
+        q.CargarArchivo();
+        u = q;
+        
 
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
@@ -481,7 +462,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JTextField tf_nombreu;
     // End of variables declaration//GEN-END:variables
 ArrayList<SeresVivos> ListSeres = new ArrayList();
-    Universo u = new Universo("/.Universo.txt", "hola");
+    Universo u= new Universo(null, "./Salida.txt");
+    SeresVivos s = new SeresVivos();
     int cont = 0;
     int indice;
 }
